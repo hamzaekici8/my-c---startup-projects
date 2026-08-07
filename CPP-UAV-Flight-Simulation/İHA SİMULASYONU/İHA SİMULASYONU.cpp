@@ -114,8 +114,9 @@ int main() {
                 cout << "Filoda henüz hiç araç yok!" << endl;
             }
             else {
-                for (HavaAraci* iha : havaFilosu) {
-                    iha->durumBildir(); 
+                for (const auto& iha : havaFilosu)
+                {
+                   iha->durumBildir();
                 }
             }
             break;
