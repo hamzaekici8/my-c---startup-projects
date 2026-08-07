@@ -57,7 +57,7 @@ public:
 
     
     void durumBildir() override {
-        durumBildir(); 
+       HavaAraci::durumBildir();
         cout << "Mühimmat Durumu: " << fuziSayisi << " adet füze" << endl;
         cout << "-----------------------" << endl;
     }
