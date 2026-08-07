@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include<windows.h>
+#include <memory>
 #include<vector>
 using namespace std;
 class HavaAraci {
@@ -10,6 +11,7 @@ protected:
     int hiz, irtifa, yakit;
     string ihaAdi;
 public:
+virtual ~HavaAraci() = default;
     HavaAraci(string ad) {
     ihaAdi=ad;
         hiz = 0;
@@ -38,6 +40,7 @@ private:
     int fuziSayisi; 
 
 public:
+
     
     Siha(string ad, int baslangicFüzesi) : HavaAraci(ad) {
         fuziSayisi = baslangicFüzesi;
@@ -67,7 +70,7 @@ int main() {
     SetConsoleOutputCP(1254);
     SetConsoleCP(1254);
 
-    vector<HavaAraci*> havaFilosu; 
+    vector<unique_ptr<HavaAraci>> havaFilosu;
     int secim = 0;
     bool calisiyor = true; 
 
@@ -88,8 +91,7 @@ int main() {
             string isim;
             cout << "Üretilecek İHA'nın adı ne olsun?: ";
             cin >> isim;
-            HavaAraci* gozcuIha = new HavaAraci(isim);
-            havaFilosu.push_back(gozcuIha);
+           havaFilosu.push_back(make_unique<HavaAraci>(isim));
             system("cls");
             cout << isim << " isimli hava aracı başarıyla oluşturuldu ve filoya katıldı." << endl;
             break;
@@ -101,8 +103,7 @@ int main() {
             cin >> isim;
             cout << "Kaç adet füze yüklensin?: ";
             cin >> fuze;
-            Siha* saldiriSiha = new Siha(isim, fuze);
-            havaFilosu.push_back(saldiriSiha);
+           havaFilosu.push_back(make_unique<Siha>(isim, fuze));
             system("cls");
             cout << isim << " isimli SİHA başarıyla oluşturuldu ve filoya eklendi." << endl;
             break;
@@ -130,10 +131,11 @@ int main() {
                 cout << "Uçurulacak araç yok!" << endl;
             }
             else {
-                for (HavaAraci* a : havaFilosu) {
-                    a->hızlan(100);
-                    a->irtifaKazan(500);
-                }
+                for (const auto& a : havaFilosu)
+           {
+             a->hızlan(100);
+             a->irtifaKazan(100);
+           }
                 cout << "Tüm filoya hızlanma ve tırmanma emri verildi!" << endl;
             }
             break;
@@ -144,13 +146,13 @@ int main() {
                 cout << "Filoda araç yok!" << endl;
             }
             else {
-                for (HavaAraci* iha : havaFilosu) {
-                    
-                    Siha* sihaIsaretci = dynamic_cast<Siha*>(iha);
-                    if (sihaIsaretci != nullptr) {
-                        sihaIsaretci->atesEt();
-                    }
-                }
+               for (const auto& iha : havaFilosu)
+{
+    Siha* sihaIsaretci = dynamic_cast<Siha*>(iha.get());
+
+    if(sihaIsaretci)
+        sihaIsaretci->atesEt();
+}
             }
             break;
         }
@@ -161,9 +163,7 @@ int main() {
     } 
 
     
-    for (HavaAraci* iha : havaFilosu) {
-        delete iha;
-    }
+   
 
     return 0;
 }
